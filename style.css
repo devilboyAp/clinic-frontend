@@ -11,16 +11,19 @@ body {
   padding: 20px;
 }
 
-h2 {
+h2, h3 {
   text-align: center;
 }
 
-input, button {
+/* Inputs & Buttons */
+input,
+button {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
   border-radius: 6px;
   border: none;
+  font-size: 15px;
 }
 
 input {
@@ -28,19 +31,33 @@ input {
   color: white;
 }
 
+/* Primary buttons */
 button {
   background: #1976d2;
   color: white;
-  font-size: 16px;
+  cursor: pointer;
 }
 
+button:hover {
+  opacity: 0.9;
+}
+
+/* Secondary button */
 button.secondary {
   background: #333;
 }
 
+/* Logout button */
+.logout {
+  background: #e74c3c;
+  margin-bottom: 10px;
+}
+
+/* Patient card */
 .card {
   background: #1e1e1e;
   padding: 10px;
   margin-top: 10px;
   border-radius: 6px;
+  font-size: 14px;
 }
