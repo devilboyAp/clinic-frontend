@@ -2,20 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Patient Management</title>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- React -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-  <!-- Babel -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-  <div id="root"></div>
 
-  <!-- App -->
-  <script type="text/babel" src="app.js"></script>
+<div class="container">
+
+  <h2>👨‍⚕️ Patient Management</h2>
+
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <h3>Login</h3>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" style="display:none;">
+    <button class="logout" onclick="logout()">Logout</button>
+
+    <h3>Add Patient</h3>
+    <input id="name" placeholder="Name" />
+    <input id="age" placeholder="Age" />
+    <input id="gender" placeholder="Gender" />
+    <input id="phone" placeholder="Phone" />
+    <input id="condition" placeholder="Condition" />
+
+    <button onclick="addPatient()">Add Patient</button>
+    <button onclick="loadPatients()">Load Patients</button>
+
+    <div id="patients"></div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
