@@ -1,76 +1,87 @@
 const API = "https://dr-a-physiotherapy-backend.onrender.com";
 
-function App() {
-  const [token, setToken] = React.useState("");
-  const [patients, setPatients] = React.useState([]);
+const token = () => localStorage.getItem("token");
 
-  const [form, setForm] = React.useState({
-    name: "",
-    age: "",
-    gender: "",
-    phone: "",
-    condition: ""
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const addPatient = async () => {
-    const res = await fetch(`${API}/patients/pre`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": token
-      },
-      body: JSON.stringify(form)
-    });
-
-    const data = await res.json();
-    alert(data.message || "Patient added");
-  };
-
-  const loadPatients = async () => {
-    const res = await fetch(`${API}/patients/pre`, {
-      headers: {
-        "Authorization": token
-      }
-    });
-    const data = await res.json();
-    setPatients(data);
-  };
-
-  return (
-    <div className="container">
-      <h2>👨‍⚕️ Patient Management</h2>
-
-      <input
-        placeholder="Paste Bearer Token"
-        value={token}
-        onChange={(e) => setToken(e.target.value)}
-      />
-
-      <h3>Add Patient</h3>
-
-      <input name="name" placeholder="Name" onChange={handleChange} />
-      <input name="age" placeholder="Age" onChange={handleChange} />
-      <input name="gender" placeholder="Gender" onChange={handleChange} />
-      <input name="phone" placeholder="Phone" onChange={handleChange} />
-      <input name="condition" placeholder="Condition" onChange={handleChange} />
-
-      <button onClick={addPatient}>Add Patient</button>
-      <button className="secondary" onClick={loadPatients}>Load Patients</button>
-
-      {patients.map(p => (
-        <div className="card" key={p._id}>
-          <b>{p.name}</b><br/>
-          {p.age} yrs | {p.gender}<br/>
-          📞 {p.phone}<br/>
-          🩺 {p.condition}
-        </div>
-      ))}
-    </div>
-  );
+// AUTO LOGIN CHECK
+if (token()) {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+// LOGIN
+async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch(`${API}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.message);
+    return;
+  }
+
+  localStorage.setItem("token", data.token);
+
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+}
+
+// LOGOUT
+function logout() {
+  localStorage.removeItem("token");
+  location.reload();
+}
+
+// ADD PATIENT
+async function addPatient() {
+  const body = {
+    name: name.value,
+    age: age.value,
+    gender: gender.value,
+    phone: phone.value,
+    condition: condition.value
+  };
+
+  const res = await fetch(`${API}/patients/pre`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token()}`
+    },
+    body: JSON.stringify(body)
+  });
+
+  const data = await res.json();
+  alert(data.message || "Added");
+  loadPatients();
+}
+
+// LOAD PATIENTS
+async function loadPatients() {
+  const res = await fetch(`${API}/patients/pre`, {
+    headers: {
+      "Authorization": `Bearer ${token()}`
+    }
+  });
+
+  const patients = await res.json();
+  const div = document.getElementById("patients");
+  div.innerHTML = "";
+
+  patients.forEach(p => {
+    div.innerHTML += `
+      <div class="card">
+        <strong>${p.name}</strong><br/>
+        ${p.age} yrs | ${p.gender}<br/>
+        📞 ${p.phone}<br/>
+        🩺 ${p.condition}
+      </div>
+    `;
+  });
+}
