@@ -36,7 +36,7 @@ function logout() {
   location.reload();
 }
 
-/* ================= ADD PATIENT (FINAL FIX) ================= */
+/* ================= ADD PATIENT ================= */
 async function addPatient() {
   const name = document.getElementById("name").value.trim();
   const age = document.getElementById("age").value.trim();
@@ -53,7 +53,7 @@ async function addPatient() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token()}`
+      "Authorization": `Bearer ${getToken()}`
     },
     body: JSON.stringify({ name, age, gender, phone, condition })
   });
@@ -63,11 +63,12 @@ async function addPatient() {
 
   loadPatients();
 }
+
 /* ================= LOAD PATIENTS ================= */
 async function loadPatients() {
   const res = await fetch(`${API}/patients/pre`, {
     headers: {
-      "Authorization": `Bearer ${token()}`
+      "Authorization": `Bearer ${getToken()}`
     }
   });
 
