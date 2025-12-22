@@ -2,7 +2,7 @@ const API = "https://dr-a-physiotherapy-backend.onrender.com";
 
 const token = () => localStorage.getItem("token");
 
-// AUTO LOGIN CHECK
+/* ================= AUTO LOGIN ================= */
 if (token()) {
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
@@ -10,8 +10,8 @@ if (token()) {
 
 /* ================= LOGIN ================= */
 async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
   const res = await fetch(`${API}/auth/login`, {
     method: "POST",
@@ -27,8 +27,7 @@ async function login() {
   }
 
   localStorage.setItem("token", data.token);
-  document.getElementById("loginBox").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
+  location.reload();
 }
 
 /* ================= LOGOUT ================= */
@@ -37,7 +36,7 @@ function logout() {
   location.reload();
 }
 
-/* ================= ADD PATIENT ================= */
+/* ================= ADD PATIENT (FIXED) ================= */
 async function addPatient() {
   const name = document.getElementById("name").value.trim();
   const age = document.getElementById("age").value.trim();
@@ -50,7 +49,7 @@ async function addPatient() {
     return;
   }
 
-  const res = await fetch(`${API}/patients`, {
+  const res = await fetch(`${API}/patients/add`, {   // ✅ FIXED
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -67,7 +66,6 @@ async function addPatient() {
 
   const data = await res.json();
   alert(data.message || "Patient added");
-
   loadPatients();
 }
 
@@ -89,7 +87,7 @@ async function loadPatients() {
         <strong>${p.name}</strong><br/>
         ${p.age || "-"} yrs | ${p.gender || "-"}<br/>
         📞 ${p.phone}<br/>
-        🩺 ${p.condition || "-"}
+        ${p.condition || ""}
       </div>
     `;
   });
