@@ -1,9 +1,9 @@
 const API = "https://dr-a-physiotherapy-backend.onrender.com";
 
-const token = () => localStorage.getItem("token");
+const getToken = () => localStorage.getItem("token");
 
 /* ================= AUTO LOGIN ================= */
-if (token()) {
+if (getToken()) {
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
 }
@@ -36,7 +36,7 @@ function logout() {
   location.reload();
 }
 
-/* ================= ADD PATIENT (FIXED) ================= */
+/* ================= ADD PATIENT (FINAL FIX) ================= */
 async function addPatient() {
   const name = document.getElementById("name").value.trim();
   const age = document.getElementById("age").value.trim();
@@ -49,11 +49,11 @@ async function addPatient() {
     return;
   }
 
-  const res = await fetch(`${API}/patients/add`, {   // ✅ FIXED
+  const res = await fetch(`${API}/patients/add`, {   // ✅ CORRECT ROUTE
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token()}`
+      "Authorization": `Bearer ${getToken()}`
     },
     body: JSON.stringify({
       name,
@@ -66,6 +66,7 @@ async function addPatient() {
 
   const data = await res.json();
   alert(data.message || "Patient added");
+
   loadPatients();
 }
 
@@ -73,7 +74,7 @@ async function addPatient() {
 async function loadPatients() {
   const res = await fetch(`${API}/patients`, {
     headers: {
-      "Authorization": `Bearer ${token()}`
+      "Authorization": `Bearer ${getToken()}`
     }
   });
 
