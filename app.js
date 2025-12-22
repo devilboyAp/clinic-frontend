@@ -6,6 +6,7 @@ const getToken = () => localStorage.getItem("token");
 if (getToken()) {
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
+  loadPatients();
 }
 
 /* ================= LOGIN ================= */
@@ -61,6 +62,12 @@ async function addPatient() {
   const data = await res.json();
   alert(data.message || "Patient added");
 
+  document.getElementById("name").value = "";
+  document.getElementById("age").value = "";
+  document.getElementById("gender").value = "";
+  document.getElementById("phone").value = "";
+  document.getElementById("condition").value = "";
+
   loadPatients();
 }
 
@@ -83,7 +90,47 @@ async function loadPatients() {
         ${p.age || "-"} yrs | ${p.gender || "-"}<br/>
         📞 ${p.phone}<br/>
         ${p.condition || ""}
+
+        <div style="margin-top:10px;">
+          <button onclick="editPatient('${p._id}')">✏ Edit</button>
+          <button onclick="deletePatient('${p._id}')" style="background:red;">🗑 Delete</button>
+        </div>
       </div>
     `;
   });
+}
+
+/* ================= EDIT PATIENT ================= */
+async function editPatient(id) {
+  const name = prompt("Enter name");
+  if (!name) return;
+
+  const res = await fetch(`${API}/patients/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${getToken()}`
+    },
+    body: JSON.stringify({ name })
+  });
+
+  const data = await res.json();
+  alert(data.message || "Updated");
+  loadPatients();
+}
+
+/* ================= DELETE PATIENT ================= */
+async function deletePatient(id) {
+  if (!confirm("Delete this patient?")) return;
+
+  const res = await fetch(`${API}/patients/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${getToken()}`
+    }
+  });
+
+  const data = await res.json();
+  alert(data.message || "Deleted");
+  loadPatients();
 }
