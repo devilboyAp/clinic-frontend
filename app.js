@@ -49,19 +49,13 @@ async function addPatient() {
     return;
   }
 
-  const res = await fetch(`${API}/patients/add`, {   // ✅ CORRECT ROUTE
+  const res = await fetch(`${API}/patients/pre`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`
+      "Authorization": `Bearer ${token()}`
     },
-    body: JSON.stringify({
-      name,
-      age,
-      gender,
-      phone,
-      condition
-    })
+    body: JSON.stringify({ name, age, gender, phone, condition })
   });
 
   const data = await res.json();
@@ -69,12 +63,11 @@ async function addPatient() {
 
   loadPatients();
 }
-
 /* ================= LOAD PATIENTS ================= */
 async function loadPatients() {
-  const res = await fetch(`${API}/patients`, {
+  const res = await fetch(`${API}/patients/pre`, {
     headers: {
-      "Authorization": `Bearer ${getToken()}`
+      "Authorization": `Bearer ${token()}`
     }
   });
 
