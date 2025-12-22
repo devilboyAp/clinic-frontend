@@ -8,7 +8,7 @@ if (token()) {
   document.getElementById("dashboard").style.display = "block";
 }
 
-// LOGIN
+/* ================= LOGIN ================= */
 async function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -22,49 +22,58 @@ async function login() {
   const data = await res.json();
 
   if (!res.ok) {
-    alert(data.message);
+    alert(data.message || "Login failed");
     return;
   }
 
   localStorage.setItem("token", data.token);
-
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
 }
 
-// LOGOUT
+/* ================= LOGOUT ================= */
 function logout() {
   localStorage.removeItem("token");
   location.reload();
 }
 
-// ADD PATIENT
+/* ================= ADD PATIENT ================= */
 async function addPatient() {
-  const body = {
-    name: name.value,
-    age: age.value,
-    gender: gender.value,
-    phone: phone.value,
-    condition: condition.value
-  };
+  const name = document.getElementById("name").value.trim();
+  const age = document.getElementById("age").value.trim();
+  const gender = document.getElementById("gender").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const condition = document.getElementById("condition").value.trim();
 
-  const res = await fetch(`${API}/patients/pre`, {
+  if (!name || !phone) {
+    alert("Name and phone are required");
+    return;
+  }
+
+  const res = await fetch(`${API}/patients`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token()}`
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify({
+      name,
+      age,
+      gender,
+      phone,
+      condition
+    })
   });
 
   const data = await res.json();
-  alert(data.message || "Added");
+  alert(data.message || "Patient added");
+
   loadPatients();
 }
 
-// LOAD PATIENTS
+/* ================= LOAD PATIENTS ================= */
 async function loadPatients() {
-  const res = await fetch(`${API}/patients/pre`, {
+  const res = await fetch(`${API}/patients`, {
     headers: {
       "Authorization": `Bearer ${token()}`
     }
@@ -78,9 +87,9 @@ async function loadPatients() {
     div.innerHTML += `
       <div class="card">
         <strong>${p.name}</strong><br/>
-        ${p.age} yrs | ${p.gender}<br/>
+        ${p.age || "-"} yrs | ${p.gender || "-"}<br/>
         📞 ${p.phone}<br/>
-        🩺 ${p.condition}
+        🩺 ${p.condition || "-"}
       </div>
     `;
   });
